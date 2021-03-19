@@ -12,6 +12,28 @@ public class Model {
 	private boolean inGioco = false;
 	
 	private Set<Integer> tentativi;
+	private ArrayList<Integer> bassi;
+	private ArrayList<Integer> alti;
+	
+	public String assistita() {
+		int min = 0;
+    	int max = 0;
+    	
+    	Collections.sort(bassi);
+    	Collections.sort(alti);
+    	
+    	if(alti.isEmpty())
+    		max = NMAX;
+    	else
+    		max = alti.get(0);
+    	
+    	if(bassi.isEmpty())
+    		min = 1;
+    	else
+    		min = bassi.get(bassi.size()-1);
+    	
+		return "" + min + ";" + max;
+	}
 	
 	public void nuovaPartita() {
 		//gestione inizio nuova partita
@@ -19,11 +41,14 @@ public class Model {
     	this.tentativiFatti = 0;
     	this.inGioco = true;
     	this.tentativi = new HashSet<Integer>();
+    	this.alti = new ArrayList<Integer>();
+    	this.bassi = new ArrayList<Integer>();
 	}
 	
 	public int tentativo(int tentativo) {
 		//controllo se la partita è in corso
 		if(!inGioco) {
+			this.tentativiFatti++;
 			throw new IllegalStateException("HAI PERSO! IL SEGRETO ERA " + this.segreto);
 		}
 		
@@ -42,10 +67,14 @@ public class Model {
 			this.inGioco = false;
 			return 0;
 		}
-		else if (tentativo < this.segreto)
+		else if (tentativo < this.segreto) {
+			bassi.add(tentativo);
 			return -1;
-		else
+		}
+		else {
+			alti.add(tentativo);
 			return 1;
+		}
 	}
 	
 	private boolean tentativoValido(int tentativo) {
