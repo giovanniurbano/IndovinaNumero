@@ -5,8 +5,8 @@ import java.util.*;
 
 public class Model {
 
-	private final int NMAX = 100;
-	private final int TMAX = 8;
+	private int NMAX;
+	private int TMAX;
 	private int segreto;
 	private int tentativiFatti;
 	private boolean inGioco = false;
@@ -35,7 +35,18 @@ public class Model {
 		return "" + min + ";" + max;
 	}
 	
-	public void nuovaPartita() {
+	public void nuovaPartita(String difficolta) {
+		//gestione difficoltà
+		if(difficolta == null)
+			throw new NullPointerException("Scegliere una difficoltà");
+		if(difficolta.compareTo("Facile") == 0)
+			NMAX = 50;
+		if(difficolta.compareTo("Medio") == 0)
+			NMAX = 100;
+		if(difficolta.compareTo("Difficile") == 0)
+			NMAX = 150;
+		
+		TMAX = (int) (Math.log(NMAX)/Math.log(2));
 		//gestione inizio nuova partita
     	this.segreto = (int) (Math.random() * NMAX) + 1;
     	this.tentativiFatti = 0;
@@ -47,7 +58,7 @@ public class Model {
 	
 	public int tentativo(int tentativo) {
 		//controllo se la partita è in corso
-		if(!inGioco) {
+		if(!inGioco && tentativo != this.segreto) {
 			this.tentativiFatti++;
 			throw new IllegalStateException("HAI PERSO! IL SEGRETO ERA " + this.segreto);
 		}

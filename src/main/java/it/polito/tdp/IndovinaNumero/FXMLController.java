@@ -5,6 +5,7 @@
 package it.polito.tdp.IndovinaNumero;
 
 import java.net.URL;
+import javafx.scene.control.ComboBox;
 import java.security.InvalidParameterException;
 import java.util.ResourceBundle;
 
@@ -36,7 +37,8 @@ public class FXMLController {
     
     @FXML
     private CheckBox boxAssistita;
-    
+    @FXML
+    private ComboBox<String> boxDifficolta;
     @FXML
     private ProgressBar barTentativi;
     
@@ -58,8 +60,13 @@ public class FXMLController {
     @FXML
     void doNuovaPartita(ActionEvent event) {
     	//inizio la partita
-    	this.model.nuovaPartita();
-    	
+    	try {
+    		this.model.nuovaPartita(boxDifficolta.getValue());
+    	}
+    	catch(NullPointerException npe) {
+    		this.txtRisultato.setText(npe.getMessage());
+    		return;	
+    	}
     	//gestione dell'interfaccia
     	this.txtTentativi.setText(Integer.toString(this.model.getTMAX()));
     	this.layoutTentativo.setDisable(false);
@@ -103,6 +110,7 @@ public class FXMLController {
     		return;		
 		}
     	
+    	
     	this.txtTentativi.setText(Integer.toString(this.model.getTMAX()-this.model.getTentativiFatti()));
     	this.barTentativi.setProgress(1-(double)(this.model.getTMAX()-this.model.getTentativiFatti())/this.model.getTMAX());
     	
@@ -139,7 +147,8 @@ public class FXMLController {
     @FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
     	 assert btnNuovaPartita != null : "fx:id=\"btnNuovaPartita\" was not injected: check your FXML file 'Scene.fxml'.";
-         assert txtTentativi != null : "fx:id=\"txtTentativi\" was not injected: check your FXML file 'Scene.fxml'.";
+    	 assert boxDifficolta != null : "fx:id=\"boxDifficolta\" was not injected: check your FXML file 'Scene.fxml'.";
+    	 assert txtTentativi != null : "fx:id=\"txtTentativi\" was not injected: check your FXML file 'Scene.fxml'.";
          assert barTentativi != null : "fx:id=\"barTentativi\" was not injected: check your FXML file 'Scene.fxml'.";
          assert layoutTentativo != null : "fx:id=\"layoutTentativo\" was not injected: check your FXML file 'Scene.fxml'.";
          assert txtTentativoUtente != null : "fx:id=\"txtTentativoUtente\" was not injected: check your FXML file 'Scene.fxml'.";
@@ -151,6 +160,7 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	this.boxDifficolta.getItems().addAll("Facile", "Medio", "Difficile");
     }
 }
 
